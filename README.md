@@ -62,6 +62,19 @@ Endpoints:
 - `GET /search?q=...&k=10`
 - `GET /ask?q=...`
 
+### 5) Simple Vue Frontend
+The `frontend/` folder contains a lightweight Vue 3 interface (via CDN) for triggering the
+`/ask` and `/crawl` endpoints. After starting the backend (e.g. `python app.flask.py` or
+`uvicorn`), serve the static files with any HTTP server:
+
+```bash
+cd frontend
+python -m http.server 5173
+```
+
+Open <http://localhost:5173> and configure the backend base URL at the top of the page.
+From the UI you can send questions to `/ask` and launch batch collection jobs via `/crawl`.
+
 ### Optional: LLM Answering
 If you have an OpenAI-compatible endpoint, set:
 ```bash
