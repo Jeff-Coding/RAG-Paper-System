@@ -15,3 +15,18 @@ pandas
 scikit-learn
 requests
 tqdm
+
+
+
+flask
+flask-cors
+faiss-cpu            # 如果用 GPU 索引，换成 faiss-gpu 并正确安装 CUDA 版
+rank-bm25
+sentence-transformers
+transformers
+torch
+tqdm
+PyMuPDF
+jieba
+requests
+feedparser
