@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RAG Paper System 控制台</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <div id="app" class="page">
+      <header class="page__header">
+        <h1>RAG Paper System 控制台</h1>
+        <p>使用下方面板查询文献或触发论文抓取。</p>
+      </header>
+
+      <section class="card">
+        <h2>接口配置</h2>
+        <label class="field">
+          <span class="field__label">后端基址</span>
+          <input v-model="apiBase" type="url" placeholder="http://localhost:8000" />
+        </label>
+      </section>
+
+      <section class="card">
+        <h2>智能问答</h2>
+        <form @submit.prevent="ask">
+          <label class="field">
+            <span class="field__label">问题</span>
+            <textarea
+              v-model="askForm.question"
+              placeholder="请输入想了解的问题，例如：Transformer 的核心思想是什么？"
+              rows="3"
+              required
+            ></textarea>
+          </label>
+          <label class="field field--inline">
+            <span class="field__label">返回片段数 (k)</span>
+            <input v-model.number="askForm.k" type="number" min="1" max="20" />
+          </label>
+          <div class="actions">
+            <button type="submit" :disabled="loading.ask">
+              {{ loading.ask ? "检索中…" : "开始回答" }}
+            </button>
+            <button type="button" class="secondary" @click="resetAsk" :disabled="loading.ask">
+              清除结果
+            </button>
+          </div>
+        </form>
+
+        <transition name="fade">
+          <div v-if="askResult.answer" class="result">
+            <h3>回答</h3>
+            <article class="markdown" v-html="askResult.answer"></article>
+            <div class="toggle">
+              <label>
+                <input type="checkbox" v-model="showReferences" />
+                显示引用 JSON
+              </label>
+            </div>
+            <pre v-if="showReferences" class="code">{{ formattedReferences }}</pre>
+          </div>
+        </transition>
+        <p v-if="errors.ask" class="error">{{ errors.ask }}</p>
+      </section>
+
+      <section class="card">
+        <h2>批量抓取论文</h2>
+        <form @submit.prevent="runCrawl">
+          <label class="field">
+            <span class="field__label">关键词（使用分号分隔）</span>
+            <input
+              v-model="crawlForm.query"
+              type="text"
+              placeholder="transformer; retrieval augmented generation"
+              required
+            />
+          </label>
+          <label class="field">
+            <span class="field__label">数据源</span>
+            <input
+              v-model="crawlForm.providers"
+              type="text"
+              placeholder="arxiv,openalex,semanticscholar"
+            />
+          </label>
+          <div class="grid">
+            <label class="field">
+              <span class="field__label">每个源最大论文数</span>
+              <input v-model.number="crawlForm.maxPerSource" type="number" min="1" />
+            </label>
+            <label class="field">
+              <span class="field__label">最早年份</span>
+              <input v-model.number="crawlForm.yearMin" type="number" min="1900" />
+            </label>
+            <label class="field">
+              <span class="field__label">最晚年份</span>
+              <input v-model.number="crawlForm.yearMax" type="number" min="1900" />
+            </label>
+          </div>
+          <label class="field field--inline">
+            <span class="field__label">抓取后自动执行 ingest</span>
+            <input type="checkbox" v-model="crawlForm.runIngest" />
+          </label>
+          <div class="actions">
+            <button type="submit" :disabled="loading.crawl">
+              {{ loading.crawl ? "正在抓取…" : "开始抓取" }}
+            </button>
+            <button type="button" class="secondary" @click="resetCrawl" :disabled="loading.crawl">
+              重置表单
+            </button>
+          </div>
+        </form>
+        <transition name="fade">
+          <p v-if="crawlResult" class="status">{{ crawlResult }}</p>
+        </transition>
+        <p v-if="errors.crawl" class="error">{{ errors.crawl }}</p>
+      </section>
+
+      <footer class="page__footer">
+        <p>保持后端服务运行：<code>python app.flask.py</code> 或 <code>gunicorn</code>。</p>
+      </footer>
+    </div>
+  </body>
+</html>
