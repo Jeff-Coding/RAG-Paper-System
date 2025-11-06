@@ -1,0 +1,105 @@
+# ---------------------------
+# OS / Editor
+# ---------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+.idea/
+.vscode/
+*.log
+
+# ---------------------------
+# Python / Virtual Environment
+# ---------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+.venv/
+venv/
+env/
+Pipfile.lock
+poetry.lock
+
+# ---------------------------
+# Jupyter / Notebook
+# ---------------------------
+.ipynb_checkpoints/
+*.ipynb_meta.json
+
+# ---------------------------
+# Build / Distribution
+# ---------------------------
+build/
+dist/
+*.egg-info/
+.eggs/
+MANIFEST
+
+# ---------------------------
+# Data / Index (custom for you)
+# ---------------------------
+data/
+index/
+# 或者只忽略其中的文件但保留文件夹结构
+# data/*
+# index/*
+# !data/.gitkeep
+# !index/.gitkeep
+
+# ---------------------------
+# Model / Cache / Output
+# ---------------------------
+checkpoints/
+models/
+outputs/
+runs/
+cache/
+*.pt
+*.pth
+*.h5
+*.ckpt
+*.onnx
+
+# ---------------------------
+# Logs / Temporary
+# ---------------------------
+*.out
+*.err
+*.tmp
+*.bak
+*.old
+*.log
+
+# ---------------------------
+# Frontend (React / Vue)
+# ---------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+dist/
+coverage/
+.cache/
+*.tsbuildinfo
+
+# ---------------------------
+# Database / JSONL / CSV Dumps
+# ---------------------------
+*.sqlite3
+*.db
+*.sql
+*.csv
+*.jsonl
+*.json.tmp
+*.parquet
+
+# ---------------------------
+# Other
+# ---------------------------
+# Ignore sensitive config files
+config.json
+config.yaml
+secret_key.txt

@@ -1,0 +1,17 @@
+fastapi
+uvicorn
+sentence-transformers
+faiss-cpu
+rank-bm25
+transformers>=4.44.0
+accelerate
+pymupdf
+pymupdf4llm
+langchain-text-splitters
+jieba
+pydantic>=2.0
+numpy
+pandas
+scikit-learn
+requests
+tqdm
