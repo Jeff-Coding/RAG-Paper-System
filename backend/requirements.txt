@@ -4,7 +4,6 @@ flask-cors>=4.0
 
 # ---------- Retrieval Stack ----------
 # ⚠️ torch 请按硬件环境单独安装（GPU 用户参考 https://pytorch.org/get-started/locally/）
-torch
 sentence-transformers>=2.5
 transformers>=4.37
 faiss-cpu>=1.7
