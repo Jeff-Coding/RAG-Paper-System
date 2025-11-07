@@ -62,6 +62,7 @@ Endpoints:
 - `GET /search?q=...&k=10`
 - `GET /ask?q=...`
 
+
 ### 5) Vue + Vite frontend console
 The `frontend/` folder now contains a Vite-powered Vue 3 console written in TypeScript. It keeps
 API settings in local storage, exposes the `/ask` and `/crawl` actions, and is structured with a
@@ -78,6 +79,7 @@ npm run dev -- --host
 Open the printed URL (default <http://localhost:5173>) and configure the backend base URL in the
 **API Settings** card. The optional API key field maps to a bearer token header for protected
 deployments. Use the remaining cards to submit questions to `/ask` and kick off crawls via `/crawl`.
+
 
 ### Optional: LLM Answering
 If you have an OpenAI-compatible endpoint, set:
