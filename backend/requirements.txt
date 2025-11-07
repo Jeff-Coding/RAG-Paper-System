@@ -1,27 +1,26 @@
 # ---------- Web Framework ----------
-flask
-flask-cors
+flask>=2.3
+flask-cors>=4.0
 
-# ---------- Core AI / NLP / ML ----------
-# ⚠️ torch 请单独安装 GPU 版本（例如 CUDA 12.4）
-# pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
-transformers
-sentence-transformers
-scikit-learn
-rank-bm25
-faiss-cpu
-accelerate
+# ---------- Retrieval Stack ----------
+# ⚠️ torch 请按硬件环境单独安装（GPU 用户参考 https://pytorch.org/get-started/locally/）
+torch
+sentence-transformers>=2.5
+transformers>=4.37
+faiss-cpu>=1.7
+rank-bm25>=0.2
+numpy>=1.24
+accelerate>=0.26
 
 # ---------- Document Parsing / Text Processing ----------
-pymupdf
-pymupdf4llm
-langchain-text-splitters
-jieba
-feedparser
+pymupdf>=1.23
+langchain-text-splitters>=0.0.1
+jieba>=0.42
+tqdm>=4.66
 
-# ---------- Data / Utils ----------
-numpy
-pandas
-pydantic>=2.0
-requests
-tqdm
+# ---------- Crawling / Networking ----------
+requests>=2.31
+feedparser>=6.0
+
+# ---------- Misc Utilities ----------
+urllib3>=2.0
