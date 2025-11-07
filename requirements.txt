@@ -1,32 +1,27 @@
-fastapi
-uvicorn
+# ---------- Web Framework ----------
+flask
+flask-cors
+
+# ---------- Core AI / NLP / ML ----------
+# ⚠️ torch 请单独安装 GPU 版本（例如 CUDA 12.4）
+# pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
+transformers
 sentence-transformers
-faiss-cpu
+scikit-learn
 rank-bm25
-transformers>=4.44.0
+faiss-cpu
 accelerate
+
+# ---------- Document Parsing / Text Processing ----------
 pymupdf
 pymupdf4llm
 langchain-text-splitters
 jieba
-pydantic>=2.0
+feedparser
+
+# ---------- Data / Utils ----------
 numpy
 pandas
-scikit-learn
+pydantic>=2.0
 requests
 tqdm
-
-
-
-flask
-flask-cors
-faiss-cpu            # 如果用 GPU 索引，换成 faiss-gpu 并正确安装 CUDA 版
-rank-bm25
-sentence-transformers
-transformers
-torch
-tqdm
-PyMuPDF
-jieba
-requests
-feedparser
