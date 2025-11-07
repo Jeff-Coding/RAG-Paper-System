@@ -255,3 +255,160 @@ a {
 a:hover {
   text-decoration: underline;
 }
+
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.dashboard__intro {
+  position: relative;
+  overflow: hidden;
+}
+
+.dashboard__intro::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 20%, rgba(99, 102, 241, 0.2), transparent 55%);
+  pointer-events: none;
+}
+
+.dashboard__intro-body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.dashboard__intro-highlights {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.dashboard__grid {
+  display: grid;
+  gap: 2rem;
+}
+
+.dashboard__card {
+  height: 100%;
+}
+
+@media (min-width: 960px) {
+  .dashboard__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.card__title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.card__eyebrow {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(99, 102, 241, 0.85);
+}
+
+.ask-card__suggestions,
+.crawl-card__tip-list,
+.result__reference-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  background: rgba(99, 102, 241, 0.08);
+  color: var(--accent-dark);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.chip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(99, 102, 241, 0.18);
+}
+
+.chip--link {
+  text-decoration: none;
+}
+
+.result__content {
+  margin: 0;
+  white-space: pre-wrap;
+  line-height: 1.7;
+}
+
+.result__references h4 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: rgba(31, 41, 51, 0.75);
+}
+
+body.dark .card__eyebrow {
+  color: rgba(129, 140, 248, 0.9);
+}
+
+body.dark .chip {
+  border-color: rgba(129, 140, 248, 0.3);
+  background: rgba(79, 70, 229, 0.18);
+  color: var(--text-light);
+}
+
+.crawl-card__tips {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: rgba(31, 41, 51, 0.65);
+}
+
+body.dark .crawl-card__tips {
+  color: rgba(226, 232, 240, 0.65);
+}
+
+.crawl-card__summary {
+  margin-top: 1.5rem;
+  padding: 1rem 1.25rem;
+  border-radius: 0.85rem;
+  background: rgba(79, 70, 229, 0.08);
+  color: rgba(31, 41, 51, 0.75);
+}
+
+.crawl-card__summary h3 {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+}
+
+.crawl-card__summary ul {
+  margin: 0;
+  padding-left: 1rem;
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+}
+
+body.dark .crawl-card__summary {
+  background: rgba(129, 140, 248, 0.18);
+  color: rgba(226, 232, 240, 0.8);
+}

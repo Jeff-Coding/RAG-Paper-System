@@ -1,8 +1,8 @@
 <template>
   <div class="app-shell">
     <header class="app-shell__header">
-      <h1>RAG Paper Console</h1>
-      <p class="app-shell__subtitle">Interact with your retrieval pipeline and monitor crawls.</p>
+      <h1>RAG 论文助手</h1>
+      <p class="app-shell__subtitle">一站式完成论文查询与爬取，界面简洁、操作高效。</p>
     </header>
 
     <main class="app-shell__main">
@@ -10,7 +10,7 @@
     </main>
 
     <footer class="app-shell__footer">
-      <span>Ready for future modules · Built with Vue 3 + Vite</span>
+      <span>Powered by Vue 3 + Vite · 专注两项关键能力</span>
     </footer>
   </div>
 </template>

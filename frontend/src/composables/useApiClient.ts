@@ -1,4 +1,3 @@
-import { computed, reactive } from 'vue';
 import type {
   ApiResult,
   AskRequest,
@@ -7,10 +6,7 @@ import type {
   CrawlResponse
 } from '@/types/api';
 
-interface ApiClientOptions {
-  baseUrl: string;
-  headers?: Record<string, string>;
-}
+const API_BASE_URL = 'http://127.0.0.1:8000';
 
 async function request<T>(url: string, options: RequestInit): Promise<ApiResult<T>> {
   try {
@@ -34,29 +30,22 @@ async function request<T>(url: string, options: RequestInit): Promise<ApiResult<
   }
 }
 
-export function useApiClient(options: ApiClientOptions) {
-  const config = reactive({ ...options });
-
-  const baseUrl = computed(() => config.baseUrl.trim().replace(/\/$/, ''));
-
+export function useApiClient() {
   return {
-    config,
     async ask(payload: AskRequest) {
-      return request<AskResponse>(`${baseUrl.value}/ask`, {
+      return request<AskResponse>(`${API_BASE_URL}/ask`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          ...config.headers
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(payload)
       });
     },
     async crawl(payload: CrawlRequest) {
-      return request<CrawlResponse>(`${baseUrl.value}/crawl`, {
+      return request<CrawlResponse>(`${API_BASE_URL}/crawl`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          ...config.headers
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(payload)
       });

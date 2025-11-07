@@ -1,9 +1,28 @@
 <template>
-  <div class="layout">
-    <ApiSettingsForm v-model="settings" @submit="handleSettingsUpdate" />
+  <div class="dashboard">
+    <section class="dashboard__intro card">
+      <div class="dashboard__intro-body">
+        <h2>论文检索工作台</h2>
+        <p>
+          使用查询快速定位重点论文，或通过爬取功能批量收集最新资料。
+          两个核心动作一目了然，助力高效科研。
+        </p>
+        <ul class="dashboard__intro-highlights">
+          <li>
+            <strong>精准问答：</strong>
+            输入问题即可获得结构化回复与参考链接。
+          </li>
+          <li>
+            <strong>一键爬取：</strong>
+            输入主题关键词，系统自动抓取并入库最新论文。
+          </li>
+        </ul>
+      </div>
+    </section>
 
-    <div class="layout__grid">
+    <div class="dashboard__grid">
       <AskForm
+        class="dashboard__card"
         :is-loading="askState.isLoading"
         :answer="askState.answer"
         :error="askState.error"
@@ -11,6 +30,7 @@
       />
 
       <CrawlTrigger
+        class="dashboard__card"
         :is-loading="crawlState.isLoading"
         :result="crawlState.result"
         :error="crawlState.error"
@@ -21,34 +41,16 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, watch } from 'vue';
-import ApiSettingsForm from '@/components/ApiSettingsForm.vue';
+import { reactive } from 'vue';
 import AskForm from '@/components/AskForm.vue';
 import CrawlTrigger from '@/components/CrawlTrigger.vue';
-import { usePersistentState } from '@/composables/usePersistentState';
 import { useApiClient } from '@/composables/useApiClient';
 import type { AskResponse, CrawlResponse } from '@/types/api';
-import type { ApiSettings } from '@/types/settings';
 
-const settings = usePersistentState<ApiSettings>('rag-console-settings', {
-  baseUrl: 'http://localhost:8000',
-  apiKey: ''
-});
-
-const apiClient = useApiClient({ baseUrl: settings.value.baseUrl });
-
-watch(
-  settings,
-  (value) => {
-    apiClient.config.baseUrl = value.baseUrl;
-    const headers: Record<string, string> = {};
-    if (value.apiKey) {
-      headers.Authorization = `Bearer ${value.apiKey}`;
-    }
-    apiClient.config.headers = Object.keys(headers).length ? headers : undefined;
-  },
-  { immediate: true, deep: true }
-);
+const apiClient = useApiClient();
+const ASK_TOP_K = 10;
+const DEFAULT_PROVIDERS = 'arxiv,openalex,semanticscholar';
+const DEFAULT_MAX_PER_SOURCE = 1;
 
 const askState = reactive({
   isLoading: false,
@@ -62,52 +64,40 @@ const crawlState = reactive({
   error: null as string | null
 });
 
-function handleSettingsUpdate(newSettings: ApiSettings) {
-  settings.value = {
-    baseUrl: newSettings.baseUrl.trim(),
-    apiKey: newSettings.apiKey?.trim() || ''
-  };
-}
-
 async function handleAsk(query: string) {
-  if (!settings.value.baseUrl.trim()) {
-    askState.error = 'Please configure the backend base URL before asking questions.';
-    askState.answer = null;
-    return;
-  }
-
   askState.isLoading = true;
   askState.error = null;
   askState.answer = null;
 
-  const response = await apiClient.ask({ query });
+  const response = await apiClient.ask({ q: query, k: ASK_TOP_K });
   askState.isLoading = false;
 
-  if (response.ok) {
-    askState.answer = response.data;
-  } else {
-    askState.error = `Failed to fetch answer (${response.status || 'network'}): ${response.message}`;
-  }
-}
-
-async function handleCrawl(seedUrl: string) {
-  if (!settings.value.baseUrl.trim()) {
-    crawlState.error = 'Please configure the backend base URL before triggering crawls.';
-    crawlState.result = null;
+  if ('status' in response) {
+    askState.error = `请求失败（${response.status || '网络'}）：${response.message}`;
     return;
   }
 
+  askState.answer = response.data;
+}
+
+async function handleCrawl(query: string) {
   crawlState.isLoading = true;
   crawlState.error = null;
   crawlState.result = null;
 
-  const response = await apiClient.crawl({ seedUrl });
+  const response = await apiClient.crawl({
+    query,
+    providers: DEFAULT_PROVIDERS,
+    max_per_source: DEFAULT_MAX_PER_SOURCE,
+    run_ingest: true
+  });
   crawlState.isLoading = false;
 
-  if (response.ok) {
-    crawlState.result = response.data;
-  } else {
-    crawlState.error = `Failed to trigger crawl (${response.status || 'network'}): ${response.message}`;
+  if ('status' in response) {
+    crawlState.error = `触发失败（${response.status || '网络'}）：${response.message}`;
+    return;
   }
+
+  crawlState.result = response.data;
 }
 </script>
