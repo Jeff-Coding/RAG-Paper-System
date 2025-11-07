@@ -49,6 +49,7 @@ from typing import Any, Dict, List, Mapping, Optional, Union
 import requests
 import feedparser
 
+from pathlib import Path
 from urllib.parse import urlparse
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
@@ -56,9 +57,11 @@ from urllib3.util.retry import Retry
 # ------------------------------
 # Configuration (defaults)
 # ------------------------------
-DEFAULT_OUT_DIR = "data/pdf"
-DEFAULT_META_DIR = "data/metadata"
-DEFAULT_META_PATH = os.path.join(DEFAULT_META_DIR, "papers.jsonl")
+BACKEND_ROOT = Path(__file__).resolve().parents[2]  # crawler -> app -> backend
+DATA_DIR      = BACKEND_ROOT / "data"
+DEFAULT_OUT_DIR  = str(DATA_DIR / "pdf")
+DEFAULT_META_DIR = str(DATA_DIR / "metadata")
+DEFAULT_META_PATH = str(Path(DEFAULT_META_DIR) / "papers.jsonl")
 DEFAULT_PROVIDERS = "arxiv,openalex,semanticscholar"
 DEFAULT_MAX_PER_SOURCE = 100
 

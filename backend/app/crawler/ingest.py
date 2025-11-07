@@ -6,8 +6,8 @@ import os
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence, Union
 
-import faiss  # type: ignore
-import fitz  # type: ignore
+import faiss
+import fitz 
 import numpy as np
 from tqdm import tqdm
 
