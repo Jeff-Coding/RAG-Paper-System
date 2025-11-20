@@ -7,6 +7,9 @@ export interface AskResponse {
   answer: string;
   references?: (string | ReferenceItem)[];
   elapsed?: number;
+  cues?: string[];
+  graph?: GraphNode[];
+  reason?: string;
 }
 
 export interface CrawlRequest {
@@ -37,6 +40,19 @@ export interface ReferenceItem {
   source?: string;
   chunk_id?: string | number;
   url?: string;
+}
+
+export interface GraphEdge {
+  target: string;
+  type: string;
+}
+
+export interface GraphNode {
+  label: string;
+  type?: string;
+  score?: number;
+  summary?: string;
+  edges?: GraphEdge[];
 }
 
 export interface ApiErrorPayload {
