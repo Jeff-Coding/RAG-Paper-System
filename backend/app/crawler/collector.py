@@ -175,7 +175,7 @@ class Crawl4AIClient:
         if self._async_crawler_cls is None:
             raise RuntimeError("crawl4ai AsyncWebCrawler missing")
         if self._browser_cfg_cls:
-            browser_cfg = self._browser_cfg_cls(headless=True, extra_headers=self._headers)
+            browser_cfg = self._browser_cfg_cls(headless=True)
             return self._async_crawler_cls(config=browser_cfg)
         return self._async_crawler_cls()
 
