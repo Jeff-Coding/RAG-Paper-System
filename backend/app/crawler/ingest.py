@@ -3,11 +3,13 @@ from __future__ import annotations
 
 import logging
 import os
+import logging
+import os
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence, Union
 
 import faiss
-import fitz 
+import fitz
 import numpy as np
 from tqdm import tqdm
 

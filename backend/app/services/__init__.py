@@ -7,6 +7,11 @@ from .retriever_service import (
     reload_retriever,
     search,
 )
+from .graph_service import (
+    format_graph_context,
+    query_graph,
+    reload_graph_index,
+)
 
 __all__ = [
     "build_context",
@@ -15,4 +20,7 @@ __all__ = [
     "format_reference_lines",
     "reload_retriever",
     "search",
+    "format_graph_context",
+    "query_graph",
+    "reload_graph_index",
 ]

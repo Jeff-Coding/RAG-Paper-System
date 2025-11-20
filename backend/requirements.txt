@@ -18,6 +18,7 @@ jieba>=0.42
 tqdm>=4.66
 
 # ---------- Crawling / Networking ----------
+crawl4ai>=0.3
 requests>=2.31
 feedparser>=6.0
 

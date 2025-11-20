@@ -1,5 +1,7 @@
 from typing import Optional, List, Tuple
 import os
+from typing import List, Optional
+
 import numpy as np
 
 # Embedding via sentence-transformers

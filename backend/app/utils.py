@@ -1,6 +1,12 @@
 import os, json, hashlib, re
-from typing import List
+from typing import List, Sequence
 from .config import TEXT_DIR
+import json
+import os
+import re
+import hashlib
+from typing import List, Sequence
+
 import jieba
 
 def write_jsonl(path, rows):
@@ -39,3 +45,32 @@ def tokenize_for_bm25(text: str) -> List[str]:
         if tok.strip():
             tokens.append(tok.lower())
     return tokens
+
+
+def extract_keywords(text: str, max_keywords: int = 8, *, boost: Sequence[str] | None = None) -> List[str]:
+    """Derive lightweight keywords from free-form text.
+
+    The implementation intentionally avoids heavy NLP dependencies so it can
+    run inside the crawler without GPU/torch.
+    """
+
+    tokens = tokenize_for_bm25(text)
+    seen = []
+    boost = boost or []
+    for item in boost:
+        norm = item.strip().lower()
+        if norm and norm not in seen:
+            seen.append(norm)
+            if len(seen) >= max_keywords:
+                return seen
+
+    for tok in tokens:
+        tok = tok.strip().lower()
+        if len(tok) < 3:
+            continue
+        if tok in seen:
+            continue
+        seen.append(tok)
+        if len(seen) >= max_keywords:
+            break
+    return seen
