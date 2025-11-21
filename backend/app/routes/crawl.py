@@ -27,7 +27,7 @@ def crawl():
         "max_per_source": body.get("max_per_source", DEFAULT_MAX_PER_SOURCE),
         "year_min": body.get("year_min"),
         "year_max": body.get("year_max"),
-        "run_ingest": bool(body.get("run_ingest", False)),
+        "run_ingest": bool(body.get("run_ingest", True)),
     }
     if "out" in body:
         config_data["out"] = body["out"]
