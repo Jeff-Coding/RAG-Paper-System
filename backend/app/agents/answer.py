@@ -4,6 +4,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Dict, List, Sequence
 
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_openai import ChatOpenAI
+
+from app.config import OPENAI_API_BASE, OPENAI_API_KEY, OPENAI_MODEL
 from app.models import llm_generate
 
 
@@ -19,39 +24,76 @@ class AnswerContext:
 
 
 class AnswerAgent:
-    """Format prompts and handle graceful degradation when no LLM is set."""
+    """LangChain-native answer generator with graceful degradation."""
 
-    def build_prompt(self, ctx: AnswerContext) -> str:
-        return f"""你是学术助理。请严格遵守以下规则，用中文并用 Markdown 输出：
-- 输出模块：**摘要**、**要点**（每条≤2句，句末标注如 [片段3]）、**证据摘录**（只放最关键的原句，最多3条）、**局限与下一步**、**参考片段**。
-- 只依据给定证据回答，**不要编造**；若证据不足，明确指出“证据不足，无法回答该部分”。
-- 优先给出结论再给推理；不要长篇堆砌。
-- 术语用简洁中文，必要时给公式/定义的最小解释。
-- 语言需自然流畅，段落之间使用恰当衔接词（如“此外”“因此”“与此同时”），避免生硬罗列或堆砌原句。
-- 每个模块给出清晰的主题句，再补充精炼解释，让读者可以顺畅阅读。
+    def __init__(self):
+        self.llm = self._resolve_llm()
+        self.prompt = ChatPromptTemplate.from_messages(
+            [
+                (
+                    "system",
+                    "你是学术助理。请严格遵守以下规则，用中文并用 Markdown 输出：\n"
+                    "- 输出模块：**摘要**、**要点**（每条≤2句，句末标注如 [片段3]）、**证据摘录**（只放最关键的原句，最多3条）、**局限与下一步**、**参考片段**。\n"
+                    "- 只依据给定证据回答，不要编造；若证据不足，请明确说明。\n"
+                    "- 优先给出结论再给推理，保持语言流畅。",
+                ),
+                (
+                    "human",
+                    "【路由策略】{strategy}（原因：{reason}）\n"
+                    "【知识图谱】\n{graph}\n\n【证据】\n{context}\n\n【问题】{question}\n"
+                    "请用中文 Markdown 输出，引用格式使用 [片段N]。",
+                ),
+            ]
+        )
 
-【路由策略】{ctx.strategy}（原因：{ctx.reason}）
-【知识图谱】
-{ctx.graph_context}
+    def _resolve_llm(self):
+        if not (OPENAI_API_BASE and OPENAI_API_KEY and OPENAI_MODEL):
+            return None
+        try:
+            return ChatOpenAI(
+                model=OPENAI_MODEL,
+                api_key=OPENAI_API_KEY,
+                base_url=OPENAI_API_BASE,
+                temperature=0.2,
+            )
+        except Exception:
+            return None
 
-【证据】
-{ctx.numbered_context}
-
-【问题】{ctx.question}
-
-现在开始回答：
-"""
+    def _fallback_snippets(self, ctx: AnswerContext) -> str:
+        extracted = ["## 摘要\n当前未配置 LLM，下面提供命中的证据片段供参考。\n"]
+        for idx, block in enumerate(ctx.evidence_blocks, start=1):
+            snippet = block[:800].strip()
+            suffix = "…" if len(block) > 800 else ""
+            extracted.append(f"### 片段{idx}\n> {snippet}{suffix}")
+        return "\n\n".join(extracted)
 
     def answer(self, ctx: AnswerContext) -> str:
-        prompt = self.build_prompt(ctx)
+        context_text = ctx.numbered_context or "（未检索到正文片段）"
+        graph_text = ctx.graph_context or "（知识图谱未查询）"
+
+        if self.llm:
+            chain = (
+                {
+                    "question": lambda _: ctx.question,
+                    "context": lambda _: context_text,
+                    "graph": lambda _: graph_text,
+                    "strategy": lambda _: ctx.strategy,
+                    "reason": lambda _: ctx.reason,
+                }
+                | self.prompt
+                | self.llm
+                | StrOutputParser()
+            )
+            return chain.invoke({})
+
+        prompt = self.prompt.format(
+            question=ctx.question,
+            context=context_text,
+            graph=graph_text,
+            strategy=ctx.strategy,
+            reason=ctx.reason,
+        )
         result = llm_generate(prompt)
         if result.startswith("（未配置 LLM") or result.startswith("(LLM"):
-            # graceful degradation: return extracted evidence
-            extracted = ["## 摘要\n当前未配置 LLM，下面提供命中的证据片段供参考。\n"]
-            for idx, block in enumerate(ctx.evidence_blocks, start=1):
-                snippet = block[:800].strip()
-                suffix = "…" if len(block) > 800 else ""
-                extracted.append(f"### 片段{idx}\n> {snippet}{suffix}")
-            result = "\n\n".join(extracted)
+            return self._fallback_snippets(ctx)
         return result
-
